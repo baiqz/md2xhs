@@ -1,0 +1,16 @@
+# 测试台的生成产物（体积大、可随时重跑）
+_test/out/
+_test/out2/
+_test/out3/
+_test/out-test.zip
+_test/*-log.txt
+_test/log.txt
+_test/diag.txt
+_test/domcheck.txt
+_test/crop.png
+
+# 依赖与系统文件
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini

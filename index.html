@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Markdown → 小红书多页图片笔记</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">MD</div>
+    <div>
+      <h1>Markdown → 小红书图片笔记</h1>
+      <p>一次排版 · 自动分页 · 封面配图 · 多配色多风格 · 一键打包下载</p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <button id="btnSample" class="btn ghost">载入示例</button>
+    <button id="btnClear" class="btn ghost">清空</button>
+    <button id="btnPng" class="btn ghost">逐张下载 PNG</button>
+    <button id="btnZip" class="btn primary">下载全部（ZIP）</button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ============ 左侧：编辑 + 设置 ============ -->
+  <section class="panel left">
+    <div class="panel-head">
+      <span class="dot"></span><span class="t">Markdown 文稿</span>
+      <span class="spacer"></span>
+      <label class="mini-btn" for="fileInput">导入 .md</label>
+      <input id="fileInput" type="file" accept=".md,.markdown,.txt" hidden />
+      <span id="stat" class="stat">0 字 · 0 页</span>
+    </div>
+
+    <textarea id="md" spellcheck="false" placeholder="在这里粘贴 Markdown 文稿…&#10;&#10;# 一级标题会成为封面标题&#10;## 二级标题 = 小节&#10;- 支持列表 / 引用 / 代码 / 表格 / 图片"></textarea>
+
+    <div class="hint">
+      <b>支持的语法</b>
+      <code># H1</code><code>## H2</code><code>### H3</code><code>**加粗**</code><code>*斜体*</code>
+      <code>`行内代码`</code><code>==高亮==</code><code>~~删除~~</code><code>- 列表</code><code>1. 有序</code>
+      <code>&gt; 引用</code><code>```代码块```</code><code>| 表格 |</code><code>--- 分割线</code><code>![](图片URL)</code>
+    </div>
+
+    <div class="settings">
+      <div class="group">
+        <div class="group-title">配色主题 <span id="themeName" class="tag"></span></div>
+        <div id="themeGrid" class="swatches"></div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">版式风格 <span id="styleName" class="tag"></span></div>
+        <div id="styleGrid" class="chips"></div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">字体</div>
+        <div id="fontGrid" class="chips"></div>
+      </div>
+
+      <div class="group grid2">
+        <label class="field">画布比例
+          <select id="ratio">
+            <option value="3:4">3:4 竖版（小红书常用）</option>
+            <option value="4:5">4:5 竖版</option>
+            <option value="1:1">1:1 方形</option>
+            <option value="9:16">9:16 长图</option>
+          </select>
+        </label>
+        <label class="field">正文字号
+          <select id="fontSize">
+            <option value="0.036">小</option>
+            <option value="0.040" selected>中</option>
+            <option value="0.045">大</option>
+            <option value="0.050">特大</option>
+          </select>
+        </label>
+        <label class="field">页边距
+          <select id="padSize">
+            <option value="0.070">紧凑</option>
+            <option value="0.085" selected>标准</option>
+            <option value="0.105">宽松</option>
+          </select>
+        </label>
+        <label class="field">输出清晰度
+          <select id="exportWidth">
+            <option value="1080" selected>1080 px（标准）</option>
+            <option value="1440">1440 px（高清）</option>
+            <option value="2160">2160 px（超清）</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="group grid2">
+        <label class="field">署名 / 账号名
+          <input id="account" type="text" placeholder="例如：@大豆的笔记" maxlength="24" />
+        </label>
+        <label class="field">结尾页文案
+          <input id="endText" type="text" placeholder="点赞 · 收藏 · 关注不迷路" maxlength="30" />
+        </label>
+      </div>
+
+      <div class="group">
+        <div class="group-title">封面配图 <span id="coverImgName" class="tag">未添加</span></div>
+        <input id="coverImgInput" type="file" accept="image/*" hidden />
+        <div id="coverImgDrop" class="imgdrop" title="点击选择图片；也可以把图片拖进来，或直接 Ctrl+V 粘贴">
+          <div id="coverImgThumb" class="imgdrop-thumb"></div>
+          <div class="imgdrop-text">
+            <b id="coverImgPick">点击选择图片</b>
+            <span>或拖入 / Ctrl+V 粘贴 · 显示在封面标题上方</span>
+          </div>
+          <button id="coverImgClear" class="mini-btn danger" type="button" hidden>移除</button>
+        </div>
+        <div id="coverImgOpts" class="grid2 imgsize off">
+          <label class="field">图片大小
+            <select id="coverImgSize">
+              <option value="sm">小</option>
+              <option value="md" selected>中</option>
+              <option value="lg">大</option>
+              <option value="xl">特大</option>
+            </select>
+          </label>
+          <label class="field">图片样式
+            <select id="coverImgShape">
+              <option value="rounded" selected>圆角矩形</option>
+              <option value="plain">直角</option>
+              <option value="circle">圆形</option>
+              <option value="polaroid">拍立得</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-title">页面元素</div>
+        <div class="toggles">
+          <label class="switch"><input type="checkbox" id="optCover" checked /><span>封面页</span></label>
+          <label class="switch"><input type="checkbox" id="optEnd" checked /><span>结尾页</span></label>
+          <label class="switch"><input type="checkbox" id="optPageNum" checked /><span>页码</span></label>
+          <label class="switch"><input type="checkbox" id="optHeader" checked /><span>页眉署名</span></label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 右侧：预览 ============ -->
+  <section class="panel right">
+    <div class="panel-head">
+      <span class="dot accent"></span><span class="t">页面预览</span>
+      <span class="spacer"></span>
+      <span id="pageInfo" class="stat">—</span>
+    </div>
+    <div id="pages" class="pages"></div>
+    <div id="progress" class="progress"><div class="bar"><i></i></div><span>正在生成图片…</span></div>
+  </section>
+
+</main>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/util.js"></script>
+<script src="js/md.js"></script>
+<script src="js/zip.js"></script>
+<script src="js/themes.js"></script>
+<script src="js/render.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
