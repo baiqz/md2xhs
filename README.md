@@ -45,6 +45,25 @@
 - 结尾页文案可自定义（默认「点赞 · 收藏 · 关注不迷路」）
 - 页码、页眉署名可分别开关
 
+### 编辑
+- **Markdown 快捷键**：选中文字按 `Ctrl+B` 加粗、`Ctrl+I` 斜体，不用手敲标记；再按一次同一快捷键即取消格式
+- **格式工具栏**：加粗 / 斜体 / 删除线 / 高亮 / 行内代码 / 链接 / H1~H3 / 列表 / 引用 / 代码块 / 表格 / 分割线 / 图片 / 清除格式，鼠标点一下就行
+- **智能回车**：在列表或引用里回车自动续下一行（有序列表还会递增序号），空条目再按一次回车就退出列表
+- `Tab` / `Shift+Tab` 整行缩进 / 反缩进；`Ctrl+S` 直接打包下载
+- 点工具栏右侧「⌘ 快捷键」可随时查看全部快捷键
+
+| 快捷键 | 作用 | 快捷键 | 作用 |
+| --- | --- | --- | --- |
+| `Ctrl+B` | 加粗 | `Ctrl+Alt+1/2/3` | 一 / 二 / 三级标题 |
+| `Ctrl+I` | 斜体 | `Ctrl+Shift+8` | 无序列表 |
+| `Ctrl+U` | 高亮 `==` | `Ctrl+Shift+7` | 有序列表 |
+| `Ctrl+Shift+X` | 删除线 `~~` | `Ctrl+Shift+9` | 引用 |
+| `Ctrl+E` | 行内代码 | `Ctrl+Shift+K` | 代码块 |
+| `Ctrl+K` | 链接 | `Ctrl+Alt+0` | 清除本段格式 |
+| `Enter` | 列表 / 引用续行 | `Tab` `Shift+Tab` | 缩进 / 反缩进 |
+
+> Mac 上把 `Ctrl` 换成 `⌘`。
+
 ### 其他
 - 拖入 `.md` 文件直接导入（拖图片则识别为封面配图）
 - 所有设置自动记住，下次打开还在
@@ -80,6 +99,7 @@ js/md.js            自研 Markdown 解析 + CJK 断行禁则
 js/zip.js           纯 JS ZIP 打包（store + CRC32）
 js/themes.js        12 套配色 × 6 种版式 × 5 种字体
 js/render.js        块 → 条目 → 自动分页 → Canvas 绘制
+js/editor.js        输入框增强：Markdown 快捷键 / 工具栏 / 智能回车
 js/app.js           界面逻辑、预览、导出
 samples/            实际渲染出来的效果图
 _test/              离线测试台（见下）
@@ -98,9 +118,14 @@ node test-render.js   # 多配色/版式/字体组合出图
 node cover.js         # 封面配图冒烟（样式 × 图源 × 大小 × 画布比例）
 node coverlayout.js   # 封面配图版式几何断言：用品红测试图逐点取像素，验证左右上 10%、底边 1/3
 node edge.js          # 边界用例：空文稿、超长表格、超长无空格串、各画布比例…
+node editcheck.js     # 编辑快捷键：纯函数用例 + DOM 桩模拟真实按键与工具栏点击
 node diag.js          # 打印每页每个条目的 x/y 坐标，定位分页问题
-node domcheck.js      # 静态校验 index.html 的 id ↔ app.js 的选择器
+node domcheck.js      # 静态校验 index.html 的 id ↔ app.js / editor.js 的选择器、CSS 完整性
 ```
+
+编辑快捷键那套逻辑（`js/editor.js`）刻意做成了**纯函数**：输入「文本 + 选区」，输出
+「新文本 + 新选区」，不碰 DOM，所以能在 Node 里直接断言光标位置 —— 快捷键最容易出的
+问题不是"没反应"，而是"文本对了但光标乱跳"，只测文本是测不出来的。
 
 ## License
 

@@ -36,7 +36,51 @@
       <span id="stat" class="stat">0 字 · 0 页</span>
     </div>
 
-    <textarea id="md" spellcheck="false" placeholder="在这里粘贴 Markdown 文稿…&#10;&#10;# 一级标题会成为封面标题&#10;## 二级标题 = 小节&#10;- 支持列表 / 引用 / 代码 / 表格 / 图片"></textarea>
+    <div id="mdbar" class="mdbar">
+      <button class="mdb" type="button" data-act="h1" title="一级标题（Ctrl+Alt+1）">H1</button>
+      <button class="mdb" type="button" data-act="h2" title="二级标题（Ctrl+Alt+2）">H2</button>
+      <button class="mdb" type="button" data-act="h3" title="三级标题（Ctrl+Alt+3）">H3</button>
+      <span class="mdb-sep"></span>
+      <button class="mdb" type="button" data-act="bold" title="加粗（Ctrl+B）"><b>B</b></button>
+      <button class="mdb" type="button" data-act="italic" title="斜体（Ctrl+I）"><i>I</i></button>
+      <button class="mdb" type="button" data-act="strike" title="删除线（Ctrl+Shift+X）"><s>S</s></button>
+      <button class="mdb" type="button" data-act="hl" title="高亮（Ctrl+U）">==</button>
+      <button class="mdb" type="button" data-act="code" title="行内代码（Ctrl+E）">&lt;/&gt;</button>
+      <button class="mdb" type="button" data-act="link" title="链接（Ctrl+K）">链接</button>
+      <span class="mdb-sep"></span>
+      <button class="mdb" type="button" data-act="ul" title="无序列表（Ctrl+Shift+8）">•</button>
+      <button class="mdb" type="button" data-act="ol" title="有序列表（Ctrl+Shift+7）">1.</button>
+      <button class="mdb" type="button" data-act="quote" title="引用（Ctrl+Shift+9）">❝</button>
+      <button class="mdb" type="button" data-act="codeblock" title="代码块（Ctrl+Shift+K）">代码块</button>
+      <span class="mdb-sep"></span>
+      <button class="mdb" type="button" data-act="table" title="插入表格">表格</button>
+      <button class="mdb" type="button" data-act="hr" title="插入分割线">分割线</button>
+      <button class="mdb" type="button" data-act="image" title="插入图片">图片</button>
+      <button class="mdb" type="button" data-act="clear" title="清除本段格式（Ctrl+Alt+0）">清除</button>
+      <span class="spacer"></span>
+      <button id="btnKeyHelp" class="mdb help" type="button" title="查看全部快捷键">⌘ 快捷键</button>
+
+      <div id="keyHelp" class="keyhelp">
+        <h4>编辑快捷键</h4>
+        <div class="row"><span>加粗</span><kbd>Ctrl</kbd><kbd>B</kbd></div>
+        <div class="row"><span>斜体</span><kbd>Ctrl</kbd><kbd>I</kbd></div>
+        <div class="row"><span>高亮 ==</span><kbd>Ctrl</kbd><kbd>U</kbd></div>
+        <div class="row"><span>删除线 ~~</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>X</kbd></div>
+        <div class="row"><span>行内代码 `</span><kbd>Ctrl</kbd><kbd>E</kbd></div>
+        <div class="row"><span>链接</span><kbd>Ctrl</kbd><kbd>K</kbd></div>
+        <div class="row"><span>一 / 二 / 三级标题</span><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1~3</kbd></div>
+        <div class="row"><span>无序 / 有序列表</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>8 / 7</kbd></div>
+        <div class="row"><span>引用</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>9</kbd></div>
+        <div class="row"><span>代码块</span><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>K</kbd></div>
+        <div class="row"><span>清除本段格式</span><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>0</kbd></div>
+        <div class="row"><span>缩进 / 反缩进</span><kbd>Tab</kbd><kbd>Shift+Tab</kbd></div>
+        <div class="row"><span>列表里续下一行</span><kbd>Enter</kbd></div>
+        <div class="row"><span>打包下载</span><kbd>Ctrl</kbd><kbd>S</kbd></div>
+        <p class="tip">再按一次同一个快捷键即可取消格式 · Mac 上把 Ctrl 换成 ⌘</p>
+      </div>
+    </div>
+
+    <textarea id="md" spellcheck="false" placeholder="在这里粘贴 Markdown 文稿…&#10;&#10;# 一级标题会成为封面标题&#10;## 二级标题 = 小节&#10;- 支持列表 / 引用 / 代码 / 表格 / 图片&#10;&#10;选中文字按 Ctrl+B 加粗、Ctrl+I 斜体；点右上角「⌘ 快捷键」看全部"></textarea>
 
     <div class="hint">
       <b>支持的语法</b>
@@ -166,6 +210,7 @@
 <script src="js/zip.js"></script>
 <script src="js/themes.js"></script>
 <script src="js/render.js"></script>
+<script src="js/editor.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

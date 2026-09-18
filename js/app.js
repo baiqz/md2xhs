@@ -445,6 +445,10 @@
     document.addEventListener('keydown', e => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); exportZip(); }
     });
+
+    // Markdown 编辑增强：快捷键 / 工具栏 / 列表自动续行
+    // 写入 textarea 会派发 input 事件，走上面对 input 的监听，所以这里不用另外触发预览
+    MDE.attach(el.md, { toolbar: '#mdbar' });
   }
 
   /* ---------- 启动 ---------- */

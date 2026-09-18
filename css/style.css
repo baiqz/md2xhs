@@ -105,6 +105,50 @@ button.mini-btn{background:transparent;line-height:1.5}
 .imgsize{margin-top:10px;transition:.16s}
 .imgsize.off{opacity:.42;pointer-events:none;filter:grayscale(.5)}
 
+/* ---------- Markdown 工具栏 ---------- */
+.mdbar{
+  position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:4px;
+  padding:8px 12px;border-bottom:1px solid var(--line);background:var(--panel-2);
+}
+.mdb{
+  min-width:27px;height:27px;padding:0 7px;border-radius:7px;cursor:pointer;
+  border:1px solid transparent;background:transparent;color:var(--sub);
+  font-family:inherit;font-size:11.5px;font-weight:600;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:background .14s,color .14s,border-color .14s;
+}
+.mdb:hover{background:#252b38;color:var(--text);border-color:var(--line-2)}
+.mdb:active{transform:translateY(1px)}
+.mdb b,.mdb i,.mdb s{font-style:normal;font-weight:800}
+.mdb i{font-style:italic}
+.mdb s{text-decoration:line-through}
+.mdb-sep{width:1px;height:16px;background:var(--line-2);margin:0 3px;flex:none}
+.mdbar .spacer{flex:1}
+.mdb.help{color:#9fb0c9;border-color:var(--line-2);padding:0 9px}
+
+/* 快捷键面板 */
+.keyhelp{
+  position:absolute;z-index:30;top:calc(100% + 6px);right:10px;width:min(320px,88%);
+  background:#1b1f2a;border:1px solid var(--line-2);border-radius:12px;
+  padding:12px 14px 10px;box-shadow:0 22px 55px rgba(0,0,0,.55);display:none;
+}
+.keyhelp.on{display:block}
+.keyhelp h4{margin:0 0 8px;font-size:12px;font-weight:700;color:var(--text);letter-spacing:.3px}
+.keyhelp .row{
+  display:flex;align-items:center;gap:5px;padding:2.5px 0;
+  font-size:11.5px;color:var(--sub);
+}
+.keyhelp .row span{flex:1;color:#a9b2c3}
+.keyhelp kbd{
+  font:600 10.5px/1.6 inherit;background:var(--panel);border:1px solid var(--line-2);
+  border-bottom-width:2px;border-radius:5px;padding:0 5px;color:#cfd6e4;min-width:18px;
+  text-align:center;
+}
+.keyhelp .tip{
+  margin:9px 0 0;padding-top:8px;border-top:1px dashed var(--line);
+  font-size:11px;color:#6f7889;line-height:1.5;
+}
+
 /* ---------- 编辑区 ---------- */
 #md{
   width:100%;min-height:320px;height:38vh;resize:vertical;border:0;outline:none;
