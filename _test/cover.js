@@ -99,7 +99,8 @@ const report = [];
     }
   }
 
-  // 2) 4 种尺寸档位 → 配图应逐档变大（用竖向图，保证高度受空间约束）
+  // 2) 4 档「图片大小」= 在固定 1/3 版式上的微调倍率（0.8/1/1.2/1.4），只做冒烟
+  //    （精确几何断言见 coverlayout.js）
   for (const sz of sizes) {
     const opts = {
       width: 1080, ratio: '3:4', themeId: 'dark', styleId: 'journal', fontId: 'sans',

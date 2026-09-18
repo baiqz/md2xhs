@@ -502,30 +502,27 @@
       drawSpaced(ctx, String(opts.account).slice(0, 18), W - pad, pad * 0.5, base * 0.04, 'right');
     }
 
-    /* ---- 封面配图（置于标题上方） ---- */
+    /* ---- 封面配图（固定版式：钉在顶部，左右上各留 10%，底边落在画布 1/3 处） ---- */
     const cImg = (opts.coverImg && images) ? images[opts.coverImg] : null;
-    const SIZE_RATIO = { sm: 0.42, md: 0.56, lg: 0.72, xl: 0.88 };
-    const MAT = base * 0.46;   // 拍立得白边
+    const SIZE_MULT = { sm: 0.8, md: 1.0, lg: 1.2, xl: 1.4 };   // 「图片大小」= 在 1/3 版式上的微调倍率
 
-    // 依据可用空间算出配图外框尺寸；横竖图统一按长边计算，观感更一致
-    function coverImageBox(maxW, maxH) {
+    // h 传 0/falsy 表示按档位取高度；传具体值用于「内容过长时压缩配图腾地方」
+    function coverImageBox(h) {
       if (!cImg) return null;
       const shape = opts.coverImgShape || 'rounded';
-      const ratio = Math.max(0.22, Math.min(4.5, cImg.w / Math.max(1, cImg.h)));
-      const side = Math.max(base * 3, maxW * (SIZE_RATIO[opts.coverImgSize] || SIZE_RATIO.md));
-      const matTop = shape === 'polaroid' ? MAT : 0;
-      const matBot = shape === 'polaroid' ? MAT * 1.9 : 0;
-      const mh = maxH - matTop - matBot;      // 扣除相纸白边后的可用高度
-      if (mh < base * 2.4) return null;       // 空间不足：宁可不放图，也不画一个米粒大的装饰
-      let iw, ih;
-      if (shape === 'circle') {
-        iw = ih = Math.min(side, mh);
-      } else if (ratio >= 1) {
-        iw = Math.min(side, mh * ratio); ih = iw / ratio;
-      } else {
-        ih = Math.min(side, mh); iw = ih * ratio;
-      }
-      return { w: iw + matTop * 2, h: ih + matTop + matBot, iw: iw, ih: ih, mat: matTop, matBot: matBot };
+      const x = W * 0.10, w = W * 0.80;
+      let top = H * 0.10;
+      // 杂志栏目的页眉条本身占到 10.8%H，会顶到 10% 处，往下让一点（其余版式严格 10%）
+      if (style.band) top = Math.max(top, bandH + base * 0.6);
+      const specH = H / 3 - top;                                 // 中档：底边正好落在 1/3
+      const hh = h || specH * (SIZE_MULT[opts.coverImgSize] || 1);
+      const mat = shape === 'polaroid' ? Math.min(base * 0.46, hh * 0.16) : 0;
+      const matBot = mat * 1.9;
+      return {
+        x: x, y: top, w: w, h: hh, specH: specH,
+        mat: mat, matBot: matBot,
+        iw: w - mat * 2, ih: Math.max(base, hh - mat - matBot)
+      };
     }
 
     // 等比铺满（object-fit: cover）绘制
@@ -601,26 +598,38 @@
       }
       paintBand(ctx, '');
 
-      const tSize = base * 1.95, tLH = Math.round(tSize * 1.3);
-      const tLines = wrapTo(tok(title, tSize, 700), contentW * 0.94);
       const sSize = base * 0.86, sLH = Math.round(sSize * 1.62);
       const sLines = subtitle ? wrapTo(tok(subtitle, sSize, 400), contentW * 0.82).slice(0, 3) : [];
 
       const top = style.band ? bandH + base * 0.7 : H * 0.1;
       const bot = H - pad * 1.6;
       const kickerAdv = style.titleMark === 'block' ? base * 1.65 : base * 1.3;
-      const textH = kickerAdv + tLines.length * tLH + base * 1.35 + sLines.length * sLH;
-
-      // 配图 + 文字整体垂直居中；配图高度自适应可用空间，保证文字不被挤出
       const gapImg = base * 1.25;
-      const box = coverImageBox(contentW, bot - top - textH - gapImg);
-      const totalH = textH + (box ? box.h + gapImg : 0);
-      let cy = top + Math.max(0, (bot - top - totalH) * 0.5);
 
-      if (box) {
-        paintCoverImage(ctx, (W - box.w) / 2, cy, box);
-        cy += box.h + gapImg;
+      // 配图固定钉在顶部（左右上各 10%，底边落在 1/3）；文字在剩余空间里垂直居中
+      const specBox = coverImageBox(0);
+      const textAreaTop = specBox ? specBox.y + specBox.h + gapImg : top;
+
+      // 标题自动缩放：优先保住配图版式（严格 1/3），文字放不下就先缩标题字号
+      let tSize = base * 1.95, tLH = Math.round(tSize * 1.3), tLines, textH = 0;
+      for (let pass = 0; pass < 20; pass++) {
+        tLines = wrapTo(tok(title, tSize, 700), contentW * 0.94);
+        textH = kickerAdv + tLines.length * tLH + base * 1.35 + sLines.length * sLH;
+        if (textH <= bot - textAreaTop || tSize <= base * 1.05) break;
+        tSize = Math.max(base * 1.05, tSize * 0.94);
+        tLH = Math.round(tSize * 1.3);
       }
+
+      // 字号已到下限仍放不下（极端长标题）：再压缩配图，最低到规格高度的 40%
+      let box = specBox;
+      if (box) {
+        const maxH = bot - box.y - gapImg - textH;
+        if (box.h > maxH) box = coverImageBox(Math.max(box.specH * 0.4, maxH));
+      }
+      const areaTop = box ? box.y + box.h + gapImg : top;
+      let cy = areaTop + Math.max(0, (bot - areaTop - textH) * 0.5);
+
+      if (box) paintCoverImage(ctx, box.x, box.y, box);
 
       ctx.fillStyle = theme.accent;
       ctx.font = '700 ' + Math.round(base * 0.6) + 'px ' + stack;
