@@ -58,5 +58,26 @@ while ((m = uvRe.exec(css))) usedVars.add(m[1]);
 const undef = [...usedVars].filter(v => !vars.has(v));
 out.push('CSS 变量: 定义 ' + vars.size + ' 个 / 使用 ' + usedVars.size + ' 个 → 未定义: ' + (undef.length ? undef.join(', ') : '(none)'));
 
+// HTML 标签配平（漏一个 </div> 会让后面的面板全部嵌套错位，肉眼极难发现）
+{
+  const VOID = new Set(['input', 'br', 'hr', 'img', 'meta', 'link']);
+  const stack = [];
+  const errs = [];
+  const tagRe = /<(\/?)([a-z0-9]+)([^>]*?)(\/?)>/gi;
+  let t;
+  while ((t = tagRe.exec(html))) {
+    const closing = t[1] === '/', tag = t[2].toLowerCase(), selfClose = t[4] === '/';
+    if (VOID.has(tag) || selfClose) continue;
+    if (!closing) stack.push(tag);
+    else {
+      const top = stack.pop();
+      if (top !== tag) errs.push(`</${tag}> 对应的是 <${top}>`);
+    }
+  }
+  out.push('HTML 标签配平: ' + ((stack.length === 0 && errs.length === 0)
+    ? 'OK（无未闭合、无不匹配）'
+    : `未闭合 [${stack.join(',')}] 不匹配 [${errs.join(' | ')}]`));
+}
+
 fs.writeFileSync(path.join(__dirname, 'domcheck.txt'), out.join('\n'), 'utf8');
 console.log(out.join('\n'));
